@@ -106,6 +106,7 @@ int main(int argc, char **argv)
         vm_env *env = vm_new();
         assemble_from_fd(env, in_fd);
         hook_opcodes(env);
+        vm_map_refrenced_label(env);
         vm_run(env);
         vm_free(env);
         break;

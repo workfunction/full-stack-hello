@@ -189,6 +189,10 @@ static inline vm_operand make_operand(vm_env *env, char *line, const char *data)
         op.type = CONST;
         op.value.id = vm_add_const(env, STR, quoted_strdup(data));
         break;
+    case ':':
+        op.type = LABEL;
+        op.label = strdup(data) + 1;
+        break;
     default:
         printf(
             "Error: please specify operand type for '%s' in the following "
@@ -197,7 +201,8 @@ static inline vm_operand make_operand(vm_env *env, char *line, const char *data)
             "Supported types:\n"
             "       $ (constant integer)\n"
             "       # (temp integer)\n"
-            "       \" (string literal)\n",
+            "       \" (string literal)\n"
+            "       : (label name)\n",
             data, line);
         free(line);
         exit(-1);
@@ -241,9 +246,18 @@ static void assemble_line(vm_env *env, char *line)
     vm_inst new_inst;
     const struct instruction *inst = find_inst(mnemonic);
 
-    if (!inst)
-        FATALX(1, "instruction `%s' not found\n", mnemonic);
+    if (!inst) {
+        // checking label
+        int mlen = strlen(mnemonic);
+        if (mlen > 1 && mnemonic[mlen - 1] == ':') {
+            mnemonic[mlen - 1] = '\0';
+            vm_add_label(env, mnemonic);
 
+            free(line_backup);
+            return;
+        }
+        FATALX(1, "instruction `%s' not found\n", mnemonic);
+    }
     memset(&new_inst, 0, sizeof(vm_inst));
 
     new_inst.opcode = inst->opcode;
@@ -267,7 +281,7 @@ void assemble_from_fd(vm_env *env, int fd)
     FILE *fp = fdopen(fd, "r");
 
     while (getline(&line, &size, fp) != -1) {
-        if (line[0] == ';' || line[0] == '\n')
+        if (line[0] == ';' || line[0] == '\n' || line[0] == '\r')
             continue;
         /* Remove trailing newline feed */
         line[strcspn(line, "\r\n")] = 0;
