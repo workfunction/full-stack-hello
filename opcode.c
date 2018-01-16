@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "opcode.h"
 #include "vm.h"
@@ -130,9 +131,16 @@ static void print_impl(VM_HANDLER_ARGS)
     }
 }
 
+static void scan_impl(VM_HANDLER_ARGS)
+{
+    scanf("%d", &(VM_INT(op1)));
+    VM_T(op1) = INT;
+}
+
 void hook_opcodes(vm_env *env)
 {
     vm_hook_opcode_handler(env, OP_PRINT, print_impl);
+    vm_hook_opcode_handler(env, OP_SCAN, scan_impl);
     vm_hook_opcode_handler(env, OP_ADD, add_impl);
     vm_hook_opcode_handler(env, OP_SUB, sub_impl);
     vm_hook_opcode_handler(env, OP_MUL, mul_impl);
