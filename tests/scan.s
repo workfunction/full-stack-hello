@@ -1,4 +1,4 @@
-print "Hello scan"
+print "Hello scan! Enter a number: "
 scan #0
-print "here is the number"
+print "Here is the number: "
 print #0

@@ -14,6 +14,7 @@ allow the execution of classic Hello World program.
 | OP_DIV | divide two two operands |
 | OP_MOD | Modulo, remainder of operand 1 divided by operand 2 |
 | OP_PRINT | print integer or string |
+| OP_SCAN | keyboard input a integer to operand 1 |
 | OP_JLT | jump to specified address (in operand 2) if operand 1 is less than 0 |
 | OP_JLE | jump to specified address (in operand 2) if operand 1 is less than or equal to 0 |
 | OP_JZ | jump to specified address (in operand 2) if operand 1 is equal to 0 |
